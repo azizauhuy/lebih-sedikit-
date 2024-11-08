@@ -46,6 +46,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['payment_receipt'])) {
         $error_message = "Format file tidak valid atau terjadi kesalahan saat upload.";
     }
 }
+
+// Proses logout jika tombol ditekan
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['finish_report'])) {
+    // Hapus sesi pengguna
+    session_unset();
+    session_destroy();
+    header('Location: submit.php'); // Arahkan kembali ke halaman submit
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -145,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['payment_receipt'])) {
                     <th>Judul</th>
                     <th>Abstrak</th>
                     <th>Status</th>
-                    <th>Aksi</th>
+                    <th>Upload Bukti Pembayaran</th>
                 </tr>
             </thead>
             <tbody>
@@ -161,12 +170,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['payment_receipt'])) {
                                 <form method="POST" class="upload-form" enctype="multipart/form-data">
                                     <input type="hidden" name="submission_id" value="<?php echo $submission['id']; ?>">
                                     <input type="file" name="payment_receipt" required>
-                                    <button type="submit">Upload Bukti Pembayaran</button>
+                                    <button type="submit">Upload</button>
                                 </form>
                             <?php elseif ($submission['status'] === 'rejected'): ?>
                                 <p>Alasan Ditolak: <?php echo htmlspecialchars($submission['rejection_reason']); ?></p>
                             <?php endif; ?>
-                            <button onclick="window.location.href='edit.php?id=<?php echo $submission['id']; ?>'">Edit</button>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -176,7 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['payment_receipt'])) {
             <a href="submit.php">Ajukan Judul Baru</a>
         </div>
         <form method="POST">
-            <button type="submit" name="finish_report">Selesai dan Logout</button>
+            <button type="submit" name="finish_report">Selesai</button>
         </form>
     </div>
 </body>
